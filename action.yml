@@ -29,13 +29,12 @@ runs:
       key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
   - run: pre-commit run --show-diff-on-failure --color=always ${{ inputs.extra_args }} > pre-commit/results.txt
     shell: bash
-  - run: RESULT=$(cat pre-commit/results.txt)
-    shell: bash
-  - run: echo "RESULT<<EOF" >> $GITHUB_ENV
-    shell: bash
-  - run: echo "$RESULT" >> $GITHUB_ENV
-    shell: bash
-  - run: echo "EOF" >> $GITHUB_ENV
+  - name: Put Plan Files in ENV Vars
+    run: |
+      PLAN=$(cat pre-commit/results.txt)
+      echo "PLAN<<EOF" >> $GITHUB_ENV
+      echo "$PLAN" >> $GITHUB_ENV
+      echo "EOF" >> $GITHUB_ENV
     shell: bash
 
   - name: Post to GitHub PR
