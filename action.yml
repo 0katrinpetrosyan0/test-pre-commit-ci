@@ -42,4 +42,5 @@ runs:
     env:
       GITHUB_TOKEN: ${{ inputs.github-token }}
     with:
-      path: results/results.txt
+      name: results
+      path: pre-commit
