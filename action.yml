@@ -5,7 +5,7 @@ inputs:
     description: options to pass to pre-commit run
     required: false
     # default: '--all-files'
-  github-token:
+  repo-token:
     description: "GitHub token for commenting on PRs. Defaults to using 'secrets.GITHUB_TOKEN'"
     required: false
 runs:
@@ -41,7 +41,7 @@ runs:
   - name: Post to GitHub PR
     uses: mshick/add-pr-comment@v1
     with:
-      repo-token: ${{ inputs.github-token }}
+      repo-token: ${{ inputs.repo-token }}
       allow-repeats: true
       repo-token-user-login: 'github-actions[bot]'
       message: |
