@@ -7,7 +7,7 @@ inputs:
     # default: '--all-files'
   github-token:
     description: "GitHub token for commenting on PRs. Defaults to using 'secrets.GITHUB_TOKEN'"
-    required: true
+    required: false
 runs:
   using: composite
   steps:
@@ -40,6 +40,6 @@ runs:
   - name: comment PR
     uses: machine-learning-apps/pr-comment@master
     env:
-      github-token: ${{ inputs.github-token }}
+      GITHUB_TOKEN: ${{ inputs.github-token }}
     with:
       path: results/results.txt
