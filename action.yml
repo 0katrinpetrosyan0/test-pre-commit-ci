@@ -36,6 +36,7 @@ runs:
   - run: echo "$RESULT" >> $GITHUB_ENV
     shell: bash
   - run: echo "EOF" >> $GITHUB_ENV
+    shell: bash
 
   - name: Post to GitHub PR
     uses: mshick/add-pr-comment@v1
