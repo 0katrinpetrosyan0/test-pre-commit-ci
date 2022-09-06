@@ -29,18 +29,23 @@ runs:
       key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
   - run: pre-commit run --show-diff-on-failure --color=always ${{ inputs.extra_args }} > pre-commit/results.txt
     shell: bash
-  - uses: actions/upload-artifact@v1
+  - run: RESULT=$(cat pre-commit/results.txt)
+    shell: bash
+  - run: echo "RESULT<<EOF" >> $GITHUB_ENV
+    shell: bash
+  - run: echo "$RESULT" >> $GITHUB_ENV
+    shell: bash
+  - run: echo "EOF" >> $GITHUB_ENV
+
+  - name: Post to GitHub PR
+    uses: mshick/add-pr-comment@v1
     with:
-      name: results
-      path: pre-commit
-  - uses: actions/download-artifact@v1
-    with:
-      name: results
-      path: pre-commit
-  - name: comment PR
-    uses: machine-learning-apps/pr-comment@master
-    env:
-      GITHUB_TOKEN: ${{ inputs.github-token }}
-    with:
-      name: results
-      path: pre-commit
+      repo-token: ${{ inputs.github-token }}
+      allow-repeats: true
+      repo-token-user-login: 'github-actions[bot]'
+      message: |
+          ## Output
+
+          ```diff
+          ${{ env.RESULT }}
+          ```
