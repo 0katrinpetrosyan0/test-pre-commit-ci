@@ -20,7 +20,9 @@ jobs:
       - name: run auto-changelog -save-dev
         run: npm install auto-changelog --save-dev
         shell: bash
-
+      - name: run auto-changelog -save-dev
+        run: auto-changelog -p && git add CHANGELOG.md
+        shell: bash
   changelog:
     needs: [publish]
     runs-on: ubuntu-20.04
