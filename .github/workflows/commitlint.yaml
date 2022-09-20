@@ -14,6 +14,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: run auto-changelog
+        run: npm install -g auto-changelog
+        shell: bash
+      - name: run auto-changelog -save-dev
+        run: npm install auto-changelog --save-dev
+        shell: bash
+      - name: run auto-changelog -save-dev
+        run: auto-changelog -p && git add CHANGELOG.md
+        shell: bash
   changelog:
     needs: [publish]
     runs-on: ubuntu-20.04
