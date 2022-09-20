@@ -17,6 +17,7 @@ jobs:
       - name: run auto-changelog
         run: npm install -g auto-changelog
         shell: bash
+      - name: run auto-changelog -save-dev
         run: npm install auto-changelog --save-dev
         shell: bash
 
