@@ -1,13 +1,16 @@
-name: pre-commit
-description: run pre-commit
+name: Pre-Commit Result to PR comment
+description: "run pre-commit hooks after pushing something to repository and publish diff result into PR comment"
+author: Das Meta
+branding:
+  icon: globe
+  color: purple
 inputs:
   extra_args:
     description: options to pass to pre-commit run
     required: false
-    # default: '--all-files'
-  github-token:
+  repo-token:
     description: "GitHub token for commenting on PRs. Defaults to using 'secrets.GITHUB_TOKEN'"
-    required: true
+    required: false
 runs:
   using: composite
   steps:
@@ -27,19 +30,24 @@ runs:
     with:
       path: ~/.cache/pre-commit
       key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-  - run: pre-commit run --show-diff-on-failure --color=always ${{ inputs.extra_args }} > pre-commit/results.txt
+  - run: pre-commit run --show-diff-on-failure ${{ inputs.extra_args }} | sed -E 's/^([[:space:]]+)([-+])/\2\1/g'  > results.txt
     shell: bash
-  - uses: actions/upload-artifact@v1
+  - name: Put Files in ENV Vars
+    run: |
+      RESULT=$(cat results.txt)
+      echo "RESULT<<EOF" >> $GITHUB_ENV
+      echo "$RESULT" >> $GITHUB_ENV
+      echo "EOF" >> $GITHUB_ENV
+    shell: bash
+
+  - name: Post to GitHub PR
+    uses: mshick/add-pr-comment@v1
     with:
-      name: results
-      path: pre-commit
-  - uses: actions/download-artifact@v1
-    with:
-      name: results
-      path: pre-commit
-  - name: comment PR
-    uses: machine-learning-apps/pr-comment@master
-    env:
-      github-token: ${{ inputs.github-token }}
-    with:
-      path: results/results.txt
+      repo-token: ${{ inputs.repo-token }}
+      allow-repeats: true
+      repo-token-user-login: 'github-actions[bot]'
+      message: |
+          ## Output
+          ```diff
+          ${{ env.RESULT }}
+          ```
